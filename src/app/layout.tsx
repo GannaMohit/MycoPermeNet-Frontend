@@ -19,6 +19,9 @@ export default function RootLayout({
     <ApolloWrapper>
       <PrimeReactProvider>
         <html lang="en">
+          <head>
+            <script src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"></script>
+          </head>
           <body>
             {children}
           </body>
