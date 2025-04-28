@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import "primeflex/primeflex.css";
 
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 import { ApolloWrapper } from "../lib/apolloProvider";
