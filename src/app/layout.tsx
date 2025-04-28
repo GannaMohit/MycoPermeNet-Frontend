@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+import { ApolloWrapper } from "../lib/apolloProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,12 +15,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <PrimeReactProvider>
-      <html lang="en">
-        <body>
-          {children}
-        </body>
-      </html>
-    </PrimeReactProvider>
+    <ApolloWrapper>
+      <PrimeReactProvider>
+        <html lang="en">
+          <body>
+            {children}
+          </body>
+        </html>
+      </PrimeReactProvider>
+    </ApolloWrapper>
   );
 }
