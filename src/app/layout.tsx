@@ -3,7 +3,9 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primeflex/primeflex.css";
 
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
-import { ApolloWrapper } from "../lib/apolloProvider";
+import client from '../lib/apolloClient';
+import { ApolloProvider } from "@apollo/client";
+import { ApolloWrapper } from "@/lib/apolloWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,17 +18,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ApolloWrapper>
       <PrimeReactProvider>
         <html lang="en">
           <head>
             <script src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"></script>
           </head>
           <body>
-            {children}
+            <ApolloWrapper>
+              {children}
+            </ApolloWrapper>
           </body>
         </html>
       </PrimeReactProvider>
-    </ApolloWrapper>
+
   );
 }
