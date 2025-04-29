@@ -3,8 +3,6 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primeflex/primeflex.css";
 
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
-import client from '../lib/apolloClient';
-import { ApolloProvider } from "@apollo/client";
 import { ApolloWrapper } from "@/lib/apolloWrapper";
 
 export const metadata: Metadata = {
