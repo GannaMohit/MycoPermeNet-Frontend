@@ -14,29 +14,29 @@ export default function Home() {
   const [errorMol, setErrorMol] = useState(false)
   const [rdkit, setRDKit] = useState();
 
-  const query = gql`query Query($molSmile: String!){ scores(molSmile:$molSmile) }`
-  const [getScores, {loading, error, data}] = useLazyQuery(query) 
+  const query = gql`query AtomicValues($molSmile: String!){ interpretAtomic(molSmile:$molSmile) }`
+  const [getScores, {loading: loadingAtomicValues, error: errorAtomicValues, data: atomicValues}] = useLazyQuery(query) 
 
   const grad: GradientConfig = {
     thresholds: [],
     colorDomain: [],
-    palette: {name: "blue", colors: ['blue', 'green', 'purple', 'cyan']},
+    palette: {name: "blue", colors: ['purple', 'blue', 'cyan', '#00BCFF']},
     highlight: true,
-    blur: 0.8,
+    blur: 0.7,
     opacity: { min: 0.6, max: 1 },
-    radius: { min: 32, max: 64 }, // the function getGradientConfig adjusts
+    radius: { min: 15, max: 30 }, // the function getGradientConfig adjusts
     delta: 0.005,
   }
 
   const met: Method = {
-    name: "model 1",
-    scores: data == undefined ? undefined: data.scores,
-    attributes: {"name": "217745"}
+    name: "Permeability",
+    scores: atomicValues == undefined ? undefined: atomicValues.interpretAtomic,
+    attributes: {}
   }
   const molecule: Molecule = {
     string: molSmile,
     method: met,
-    attributes: {"model 1": "0.5656"}
+    attributes: {}
   }
 
   useEffect(() => {
@@ -53,12 +53,8 @@ export default function Home() {
       setErrorMol(true)
     }
     else {
-      getScores({variables:{molSmile: molSmile}}).then((dataScores) => {
-        setMol(molecule)
-        setErrorMol(false)
-      }).catch(() => {
-        setErrorMol(true)
-      })
+      getScores({variables:{molSmile: molSmile}})
+      setErrorMol(false)
     }
   }
   return (
@@ -76,8 +72,9 @@ export default function Home() {
           </div>
         </form>
       </div>
-      {loading && "Loading..." }
-      {data && <SingleView
+      {errorAtomicValues &&  <Message severity="error" text={errorAtomicValues.message} />}
+      {loadingAtomicValues && "Loading..." }
+      {atomicValues && <SingleView
         molecule={molecule}
         drawerType='RDKitDrawer'
         gradientConfig={grad}
