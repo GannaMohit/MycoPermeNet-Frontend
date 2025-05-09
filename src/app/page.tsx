@@ -7,6 +7,7 @@ import { gql, useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import {SingleView, Molecule} from '../lib/xsmiles/modules/SingleView';
 import { Method } from '@/lib/xsmiles/types/molecule.types';
 import { GradientConfig } from '@/lib/xsmiles/types/gradient.types';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function Home() {
   const [molSmile, setMolSmile] = useState("")
@@ -14,8 +15,10 @@ export default function Home() {
   const [errorMol, setErrorMol] = useState(false)
   const [rdkit, setRDKit] = useState();
 
-  const query = gql`query AtomicValues($molSmile: String!){ interpretAtomic(molSmile:$molSmile) }`
-  const [getScores, {loading: loadingAtomicValues, error: errorAtomicValues, data: atomicValues}] = useLazyQuery(query) 
+  const queryInterpret = gql`query ($molSmile: String!){ interpretPermeabilityByAtoms(molSmile:$molSmile) }`
+  const queryPredict = gql`query ($molSmile: String!){ predictPermeabilityBySmile(molSmile:$molSmile) }`
+  const [getInterpret, {loading: loadingInterpret, error: errorInterpret, data: dataInterpret}] = useLazyQuery(queryInterpret) 
+  const [getPredict, {loading: loadingPredict, error: errorPredict, data: dataPredict}] = useLazyQuery(queryPredict) 
 
   const grad: GradientConfig = {
     thresholds: [],
@@ -30,7 +33,7 @@ export default function Home() {
 
   const met: Method = {
     name: "Permeability",
-    scores: atomicValues == undefined ? undefined: atomicValues.interpretAtomic,
+    scores: dataInterpret == undefined ? undefined: dataInterpret.interpretPermeabilityByAtoms,
     attributes: {}
   }
   const molecule: Molecule = {
@@ -53,7 +56,8 @@ export default function Home() {
       setErrorMol(true)
     }
     else {
-      getScores({variables:{molSmile: molSmile}})
+      getInterpret({variables:{molSmile: molSmile}})
+      getPredict({variables:{molSmile: molSmile}})
       setErrorMol(false)
     }
   }
@@ -72,13 +76,28 @@ export default function Home() {
           </div>
         </form>
       </div>
-      {errorAtomicValues &&  <Message severity="error" text={errorAtomicValues.message} />}
-      {loadingAtomicValues && "Loading..." }
-      {atomicValues && <SingleView
+
+      <div className="flex flex-column m-1">
+        {errorPredict &&  <Message severity="error" text={errorPredict.message} />}
+        { loadingPredict && <ProgressSpinner />}
+            { dataPredict &&
+              <div style={{alignItems: 'center'}}>
+                  <h2 style={ {textAlign: 'center'} }>
+                      { dataPredict.predictPermeabilityBySmile.toFixed(2) + " / 3.0" }
+                  </h2>
+              </div>     
+            }
+      </div>
+      <div className='align-items-center'>
+        { errorInterpret &&  <Message severity="error" text={errorInterpret.message} /> }
+        { loadingInterpret && <ProgressSpinner />}
+        {dataInterpret && <SingleView
         molecule={molecule}
         drawerType='RDKitDrawer'
         gradientConfig={grad}
       />}
+      </div>
+      
     </div>
     
   );

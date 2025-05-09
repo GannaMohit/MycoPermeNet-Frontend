@@ -46,7 +46,7 @@ export default function Molecule() {
                             { dataPredict &&
                             <div style={{alignItems: 'center'}}>
                                 <h2 style={ {textAlign: 'center'} }>
-                                    { dataPredict.predictPermeabilityByMolecularDescriptors.toFixed(2) }
+                                    { dataPredict.predictPermeabilityByMolecularDescriptors.toFixed(2) + " / 3.0" }
                                 </h2>
                             </div> 
                                 
