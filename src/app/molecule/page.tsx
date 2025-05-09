@@ -1,11 +1,12 @@
 "use client"
 import { Slider } from 'primereact/slider';
-import {moleculeDescriptorsInfo, descriptor} from './consts'
+import {moleculeDescriptorsInfo, descriptor, descriptorNames} from './consts'
 import { useState } from 'react';
 import { InputNumber } from 'primereact/inputnumber';
 import { gql, useQuery } from '@apollo/client';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Chart } from 'primereact/chart';
+import { Message } from 'primereact/message';
 
 export default function Molecule() {
     const queryInterpret = gql`query ($descriptors: Descriptors!){ interpretPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
@@ -15,7 +16,9 @@ export default function Molecule() {
     
     const {loading: loadingInterpret, error: errorInterpret, data: dataInterpret} = useQuery(queryInterpret, {variables:{descriptors: descriptorInputs.map((e) => e.value)}})
     const {loading: loadingPredict, error: errorPredict, data: dataPredict} = useQuery(queryPredict, {variables:{descriptors: descriptorInputs.map((e) => e.value)}})
-
+    
+    const chartData = {labels: moleculeDescriptorsInfo.map((e)=> e.descriptor), datasets: [{label: 'Interpretation Values', data: dataInterpret && dataInterpret.interpretPermeabilityByMolecularDescriptors}]}
+    
     const handleInputChange = (index: number, val: number) => {
         const newdescriptorInputs = [...descriptorInputs];
         newdescriptorInputs[index].value = val;
@@ -38,12 +41,23 @@ export default function Molecule() {
                 </div>
                 <div className="flex flex-column gap-2 h-2 w-6 m-1">
                     <div className="flex flex-column gap-2 m-1">
+                        {errorPredict &&  <Message severity="error" text={errorPredict.message} />}
                         { loadingPredict && <ProgressSpinner />}
-                        { dataPredict && dataPredict.predictPermeabilityByMolecularDescriptors }
+                            { dataPredict &&
+                            <div style={{alignItems: 'center'}}>
+                                <h2 style={ {textAlign: 'center'} }>
+                                    { dataPredict.predictPermeabilityByMolecularDescriptors.toFixed(2) }
+                                </h2>
+                            </div> 
+                                
+                            }
                     </div>
-                    <div className="flex flex-column gap-2 h-2 w-6 m-1">
+                    <div className='align-items-center'>
+                        { errorInterpret &&  <Message severity="error" text={errorInterpret.message} /> }
                         { loadingInterpret && <ProgressSpinner />}
-                        { dataInterpret && dataInterpret.interpretPermeabilityByMolecularDescriptors }
+                        { dataInterpret && 
+                        <Chart type='bar' data={chartData} height='250%' options={{indexAxis: 'y'}}></Chart>
+                        }
                     </div>
                     
                 </div>
