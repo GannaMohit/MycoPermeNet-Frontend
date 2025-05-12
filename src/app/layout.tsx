@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primeflex/primeflex.css";
+import "primeicons/primeicons.css";
 
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 import { ApolloWrapper } from "@/lib/apolloWrapper";
+import { Menubar } from "primereact/menubar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,6 +17,27 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pages = [
+    {
+      label: 'Home',
+      icon: 'pi pi-home',
+      url: "/"
+    },
+    {
+      label: 'Atomic',
+      icon: 'pi pi-star',
+      url: "/"
+    },
+    {
+      label: 'Molecular',
+      icon: 'pi pi-star',
+      url: "/molecule"
+    },
+    {
+      label: 'Contact',
+      icon: 'pi pi-envelope'
+    }
+  ]
   return (
       <PrimeReactProvider>
         <html lang="en">
@@ -23,6 +46,7 @@ export default function RootLayout({
           </head>
           <body>
             <ApolloWrapper>
+              <Menubar model={pages} />
               {children}
             </ApolloWrapper>
           </body>
