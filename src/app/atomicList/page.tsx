@@ -1,22 +1,23 @@
 "use client"
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Message } from 'primereact/message';
 import { Button } from 'primereact/button';
 import { gql, useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
-import {SingleView, Molecule} from '../../lib/xsmiles/modules/SingleView';
-import { Method } from '@/lib/xsmiles/types/molecule.types';
-import { GradientConfig } from '@/lib/xsmiles/types/gradient.types';
+import {SingleView, Molecule} from '@/lib/xsmiles/src/modules/SingleView';
+import { Method } from '@/lib/xsmiles/src/types/molecule.types';
+import { GradientConfig } from '@/lib/xsmiles/src/types/gradient.types';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataView } from 'primereact/dataview';
 import { classNames } from 'primereact/utils';
 import { MoleculeItem } from './types';
+import { RDKitModule } from '@rdkit/rdkit';
 
 export default function Home() {
     const [molListString, setMolListString] = useState("")
     const [moleculeList, setMoleculeList] = useState<string[]>([])
     const [errorMol, setErrorMol] = useState(false)
-    const [rdkit, setRDKit] = useState();
+    const [rdkit, setRDKit] = useState<RDKitModule>();
 
     const queryInterpret = gql`query ($molList: [String]!){ interpretPermeabilityOfListByAtoms(molList:$molList) }`
     const queryPredict = gql`query ($molList: [String]!){ predictPermeabilityOfListByAtoms(molList:$molList) }`
@@ -35,21 +36,23 @@ export default function Home() {
     }
 
     useEffect(() => {
-        window.initRDKitModule().then((RDKit: any) => {
+        window.initRDKitModule().then((RDKit: RDKitModule) => {
             window.RDKit = RDKit
             setRDKit(RDKit);
         });
     }, []);
 
-    function handleInputSubmit(e:any) {
+    function handleInputSubmit(e: FormEvent) {
         e.preventDefault();
         const molList: string[] = molListString.split("\n")
 
         molList.forEach((molSmile) => {
-            let rdkitMol = rdkit.get_mol(molSmile)
-            if (rdkitMol == null) {
-                setErrorMol(true)
-                return
+            if (rdkit) {
+                let rdkitMol = rdkit.get_mol(molSmile)
+                if (rdkitMol == null) {
+                    setErrorMol(true)
+                    return
+                }
             }
         })
         getInterpret({variables:{molList: molList}})
@@ -90,7 +93,7 @@ export default function Home() {
         );  
     };
 
-    const listTemplate = (molList) => {
+    const listTemplate = (molList: string[]) => {
         if (!molList || molList.length === 0) return null;
         
         const molListData: MoleculeItem[] = []

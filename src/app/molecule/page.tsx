@@ -33,8 +33,8 @@ export default function Molecule() {
                     {descriptorInputs.map((desc, idx) => (
                         <div className="flex flex-column gap-2 m-2" key={desc.descriptor+'div'}>
                             <label htmlFor={desc.descriptor} key={desc.descriptor+'label'}>{desc.descriptor}</label>
-                            <InputNumber value={desc.value} id={desc.descriptor} name={desc.descriptor} min={desc.info.min} max={desc.info.max} step={desc.info.step} onChange={(event) => handleInputChange(idx, event.value)} key={desc.descriptor+'input'}/>
-                            <Slider value={desc.value} min={desc.info.min} max={desc.info.max} step={desc.info.step} onChange={(event) => handleInputChange(idx, event.value)} key={desc.descriptor+'slider'}/>
+                            <InputNumber value={desc.value} id={desc.descriptor} min={desc.info.min}  max={desc.info.max} step={desc.info.step} onChange={(event) => handleInputChange(idx, event.value!)} key={desc.descriptor+'input'}/>
+                            <Slider value={desc.value} min={desc.info.min} max={desc.info.max} step={desc.info.step} required onChange={(event) => handleInputChange(idx, typeof event.value == 'number' ? event.value: event.value[0])} key={desc.descriptor+'slider'}/>
                         </div>
                     ))
                     }

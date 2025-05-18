@@ -1,19 +1,20 @@
 "use client"
 import { InputText } from 'primereact/inputtext';  
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Message } from 'primereact/message';
 import { Button } from 'primereact/button';
 import { gql, useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
-import {SingleView, Molecule} from '../lib/xsmiles/modules/SingleView';
-import { Method } from '@/lib/xsmiles/types/molecule.types';
-import { GradientConfig } from '@/lib/xsmiles/types/gradient.types';
+import {SingleView, Molecule} from '@/lib/xsmiles/src/modules/SingleView';
+import { Method } from '@/lib/xsmiles/src/types/molecule.types';
+import { GradientConfig } from '@/lib/xsmiles/src/types/gradient.types';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { RDKitModule } from '@rdkit/rdkit';
 
 export default function Home() {
   const [molSmile, setMolSmile] = useState("")
   const [mol, setMol] = useState<Molecule>()
   const [errorMol, setErrorMol] = useState(false)
-  const [rdkit, setRDKit] = useState();
+  const [rdkit, setRDKit] = useState<RDKitModule>();
 
   const queryInterpret = gql`query ($molSmile: String!){ interpretPermeabilityByAtoms(molSmile:$molSmile) }`
   const queryPredict = gql`query ($molSmile: String!){ predictPermeabilityByAtoms(molSmile:$molSmile) }`
@@ -43,23 +44,26 @@ export default function Home() {
   }
 
   useEffect(() => {
-    window.initRDKitModule().then((RDKit: any) => {
+    window.initRDKitModule().then((RDKit: RDKitModule) => {
       window.RDKit = RDKit
       setRDKit(RDKit);
     });
   }, []);
 
-  function handleInputSubmit(e) {
+  function handleInputSubmit(e: FormEvent) {
     e.preventDefault();
-    const rdkitMol = rdkit.get_mol(molSmile)
-    if (rdkitMol == null) {
-      setErrorMol(true)
+    if (rdkit) {
+      const rdkitMol = rdkit.get_mol(molSmile)
+      if (rdkitMol == null) {
+        setErrorMol(true)
+      }
+      else {
+        getInterpret({variables:{molSmile: molSmile}})
+        getPredict({variables:{molSmile: molSmile}})
+        setErrorMol(false)
+      }
     }
-    else {
-      getInterpret({variables:{molSmile: molSmile}})
-      getPredict({variables:{molSmile: molSmile}})
-      setErrorMol(false)
-    }
+    
   }
   return (
     <div>
