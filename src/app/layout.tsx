@@ -29,6 +29,11 @@ export default function RootLayout({
       url: "/"
     },
     {
+      label: 'Atomic List',
+      icon: 'pi pi-star',
+      url: "/atomicList"
+    },
+    {
       label: 'Molecular',
       icon: 'pi pi-star',
       url: "/molecule"

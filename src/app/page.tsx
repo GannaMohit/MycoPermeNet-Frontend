@@ -16,7 +16,7 @@ export default function Home() {
   const [rdkit, setRDKit] = useState();
 
   const queryInterpret = gql`query ($molSmile: String!){ interpretPermeabilityByAtoms(molSmile:$molSmile) }`
-  const queryPredict = gql`query ($molSmile: String!){ predictPermeabilityBySmile(molSmile:$molSmile) }`
+  const queryPredict = gql`query ($molSmile: String!){ predictPermeabilityByAtoms(molSmile:$molSmile) }`
   const [getInterpret, {loading: loadingInterpret, error: errorInterpret, data: dataInterpret}] = useLazyQuery(queryInterpret) 
   const [getPredict, {loading: loadingPredict, error: errorPredict, data: dataPredict}] = useLazyQuery(queryPredict) 
 
@@ -83,7 +83,7 @@ export default function Home() {
             { dataPredict &&
               <div style={{alignItems: 'center'}}>
                   <h2 style={ {textAlign: 'center'} }>
-                      { dataPredict.predictPermeabilityBySmile.toFixed(2) + " / 3.0" }
+                      { dataPredict.predictPermeabilityByAtoms.toFixed(2) + " / 3.0" }
                   </h2>
               </div>     
             }

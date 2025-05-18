@@ -29,7 +29,7 @@ export default function Molecule() {
         <div>
             <h1>Molecule MycoPermeNet</h1>
             <div className="flex flex-column-2">
-                <div className="flex flex-column gap-2 w-6 m-1">
+                <div className="flex flex-column gap-2 w-3 m-1">
                     {descriptorInputs.map((desc, idx) => (
                         <div className="flex flex-column gap-2 m-2" key={desc.descriptor+'div'}>
                             <label htmlFor={desc.descriptor} key={desc.descriptor+'label'}>{desc.descriptor}</label>
@@ -39,7 +39,7 @@ export default function Molecule() {
                     ))
                     }
                 </div>
-                <div className="flex flex-column gap-2 h-2 w-6 m-1">
+                <div className="flex flex-column gap-2 h-2 w-7 m-1">
                     <div className="flex flex-column gap-2 m-1">
                         {errorPredict &&  <Message severity="error" text={errorPredict.message} />}
                         { loadingPredict && <ProgressSpinner />}
@@ -56,7 +56,7 @@ export default function Molecule() {
                         { errorInterpret &&  <Message severity="error" text={errorInterpret.message} /> }
                         { loadingInterpret && <ProgressSpinner />}
                         { dataInterpret && 
-                        <Chart type='bar' data={chartData} height='250%' options={{indexAxis: 'y'}}></Chart>
+                        <Chart type='bar' data={chartData} height='175%' options={{indexAxis: 'y'}}></Chart>
                         }
                     </div>
                     
