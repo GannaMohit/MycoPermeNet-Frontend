@@ -41,7 +41,7 @@ export default function Home() {
         });
     }, []);
 
-    function handleInputSubmit(e) {
+    function handleInputSubmit(e:any) {
         e.preventDefault();
         const molList: string[] = molListString.split("\n")
 
