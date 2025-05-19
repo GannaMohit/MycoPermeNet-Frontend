@@ -8,7 +8,7 @@ import {
     RawMolecule,
     Vertex,
 } from "../../types/molecule.types"; 
-import { Drawer } from "src/types/drawer.interface";
+import { Drawer } from "../../types/drawer.interface";
 
 //TODO RENAMING - remove confusion: Smiles, SmilesElements, IndexedSmilesElements
 class MoleculeStructureService {

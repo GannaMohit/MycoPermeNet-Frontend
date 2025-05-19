@@ -1,4 +1,4 @@
-import { Method } from "src/types/molecule.types";
+import { Method } from "../../../types/molecule.types";
 import { shortenNumber } from "../../../util";
 
 import Table from "@mui/material/Table";

@@ -8,7 +8,7 @@ import {
 import moleculeStructureService from "./molecule/molecule.structure.service";
 import moleculeMethodService from "./molecule/molecule.method.service";
 import { example } from "./assets/data.example";
-import { RankingType } from "src/types/app.types";
+import { RankingType } from "../types/app.types";
 
 import {
     zScore,

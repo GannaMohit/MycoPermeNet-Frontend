@@ -8,7 +8,7 @@ import { isEmptyNullUndefined } from "../../../../util";
 import drawerService from "../../../../services/drawers/drawer.service";
 
 import moleculeStructureService from "../../../../services/molecule/molecule.structure.service";
-import RDKitDrawer from "src/services/drawers/rdkitDrawer";
+import RDKitDrawer from "../../../../services/drawers/rdkitDrawer";
 interface Props {
     id: string;
     width?: number;

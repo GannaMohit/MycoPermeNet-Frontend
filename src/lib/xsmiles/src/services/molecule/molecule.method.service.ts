@@ -1,4 +1,4 @@
-import { ColorDomainType } from "src/types/app.types";
+import { ColorDomainType } from "../../types/app.types";
 import { Method, MoleculeFromJson } from "../../types/molecule.types";
 import moleculesDatasetService from "../molecules.dataset.service";
 class MoleculeMethodService {
