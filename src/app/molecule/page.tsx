@@ -7,15 +7,18 @@ import { gql, useQuery } from '@apollo/client';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Chart } from 'primereact/chart';
 import { Message } from 'primereact/message';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 export default function Molecule() {
     const queryInterpret = gql`query ($descriptors: Descriptors!){ interpretPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
     const queryPredict = gql`query ($descriptors: Descriptors!){ predictPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
-    
+    const querySimilar = gql`query ($descriptors: Descriptors!){ findSimilarMoleculesByMolecularDescriptors(descriptors:$descriptors) }`
     const [descriptorInputs, setDescriptorInputs] = useState(moleculeDescriptorsInfo)
     
     const {loading: loadingInterpret, error: errorInterpret, data: dataInterpret} = useQuery(queryInterpret, {variables:{descriptors: descriptorInputs.map((e) => e.value)}})
     const {loading: loadingPredict, error: errorPredict, data: dataPredict} = useQuery(queryPredict, {variables:{descriptors: descriptorInputs.map((e) => e.value)}})
+    const {loading: loadingSimilar, error: errorSimilar, data: dataSimilar} = useQuery(querySimilar, {variables:{descriptors: descriptorInputs.map((e) => e.value)}})
     
     const chartData = {labels: moleculeDescriptorsInfo.map((e)=> e.descriptor), datasets: [{label: 'Interpretation Values', data: dataInterpret && dataInterpret.interpretPermeabilityByMolecularDescriptors}]}
     
@@ -57,6 +60,17 @@ export default function Molecule() {
                         { loadingInterpret && <ProgressSpinner />}
                         { dataInterpret && 
                         <Chart type='bar' data={chartData} height='175%' options={{indexAxis: 'y'}}></Chart>
+                        }
+                    </div>
+
+                    <div className='align-items-center'>
+                        { errorSimilar &&  <Message severity="error" text={errorSimilar.message} /> }
+                        { loadingSimilar && <ProgressSpinner />}
+                        { dataSimilar &&
+                        <DataTable value={dataSimilar.findSimilarMoleculesByMolecularDescriptors.map((row: any) => ({"smile": row[0], "distance": row[1]}))}>
+                            <Column field="smile" header="Smile"></Column>
+                            <Column field="distance" header="Distance"></Column>
+                        </DataTable>
                         }
                     </div>
                     
