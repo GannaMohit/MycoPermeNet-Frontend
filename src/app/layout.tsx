@@ -39,6 +39,11 @@ export default function RootLayout({
       url: "/molecule"
     },
     {
+      label: 'Similarity',
+      icon: 'pi pi-star',
+      url: "/similarity"
+    },
+    {
       label: 'Contact',
       icon: 'pi pi-envelope'
     }
