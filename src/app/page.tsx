@@ -6,9 +6,9 @@ import { Button } from 'primereact/button';
 import { gql, useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import {SingleView, Molecule} from '@/lib/xsmiles/src/modules/SingleView';
 import { Method } from '@/lib/xsmiles/src/types/molecule.types';
-import { GradientConfig } from '@/lib/xsmiles/src/types/gradient.types';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { RDKitModule } from '@rdkit/rdkit';
+import { defaultGradientConfig } from '@/lib/consts'
 
 export default function Home() {
   const [molSmile, setMolSmile] = useState("")
@@ -20,17 +20,6 @@ export default function Home() {
   const queryPredict = gql`query ($molSmile: String!){ predictPermeabilityByAtoms(molSmile:$molSmile) }`
   const [getInterpret, {loading: loadingInterpret, error: errorInterpret, data: dataInterpret}] = useLazyQuery(queryInterpret) 
   const [getPredict, {loading: loadingPredict, error: errorPredict, data: dataPredict}] = useLazyQuery(queryPredict) 
-
-  const grad: GradientConfig = {
-    thresholds: [],
-    colorDomain: [],
-    palette: {name: "blue", colors: ['purple', 'blue', 'cyan', '#00BCFF']},
-    highlight: true,
-    blur: 0.7,
-    opacity: { min: 0.6, max: 1 },
-    radius: { min: 15, max: 30 }, // the function getGradientConfig adjusts
-    delta: 0.005,
-  }
 
   const met: Method = {
     name: "Permeability",
@@ -98,7 +87,7 @@ export default function Home() {
         {dataInterpret && <SingleView
         molecule={molecule}
         drawerType='RDKitDrawer'
-        gradientConfig={grad}
+        gradientConfig={defaultGradientConfig}
       />}
       </div>
       

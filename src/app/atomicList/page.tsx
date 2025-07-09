@@ -5,13 +5,14 @@ import { Button } from 'primereact/button';
 import { gql, useApolloClient, useLazyQuery, useQuery } from '@apollo/client';
 import {SingleView, Molecule} from '@/lib/xsmiles/src/modules/SingleView';
 import { Method } from '@/lib/xsmiles/src/types/molecule.types';
-import { GradientConfig } from '@/lib/xsmiles/src/types/gradient.types';
+import { defaultGradientConfig } from '@/lib/consts'
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataView } from 'primereact/dataview';
 import { classNames } from 'primereact/utils';
 import { MoleculeItem } from './types';
 import { RDKitModule } from '@rdkit/rdkit';
+
 
 export default function Home() {
     const [molListString, setMolListString] = useState("")
@@ -24,16 +25,6 @@ export default function Home() {
     const [getInterpret, {loading: loadingInterpret, error: errorInterpret, data: dataInterpret}] = useLazyQuery(queryInterpret) 
     const [getPredict, {loading: loadingPredict, error: errorPredict, data: dataPredict}] = useLazyQuery(queryPredict) 
 
-    const grad: GradientConfig = {
-    thresholds: [],
-    colorDomain: [],
-    palette: {name: "blue", colors: ['purple', 'blue', 'cyan', '#00BCFF']},
-    highlight: true,
-    blur: 0.7,
-    opacity: { min: 0.6, max: 1 },
-    radius: { min: 15, max: 30 }, // the function getGradientConfig adjusts
-    delta: 0.005,
-    }
 
     useEffect(() => {
         window.initRDKitModule().then((RDKit: RDKitModule) => {
@@ -82,7 +73,7 @@ export default function Home() {
                     <div className="flex flex-row align-items-center xl:align-items-start flex-1 gap-4">
                         <div className="text-l font-bold text-600 align-items-center">{molecule.smile}</div>
                         <div className="w-8 justify-content-center h-9rem flex flex-row vertical-align-middle">
-                            <SingleView molecule={molView} drawerType='RDKitDrawer' gradientConfig={grad} width={1000} height={120} hideAttributesTable hideBarChart/>
+                            <SingleView molecule={molView} drawerType='RDKitDrawer' gradientConfig={defaultGradientConfig} width={1000} height={120} hideAttributesTable hideBarChart/>
                         </div>
                         <span className="text-l font-semibold vertical-align-middle">{molecule.predictScore}</span>
                     </div>
