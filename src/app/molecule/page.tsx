@@ -14,7 +14,7 @@ import { defaultGradientConfig } from '@/lib/consts';
 import {SingleView, Molecule} from '@/lib/xsmiles/src/modules/SingleView';
 import { Method } from '@/lib/xsmiles/src/types/molecule.types';
 
-export default function Molecule() {
+export default function MoleculeDescriptors() {
     const [rdkit, setRDKit] = useState<RDKitModule>();
     const queryInterpret = gql`query ($descriptors: Descriptors!){ interpretPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
     const queryPredict = gql`query ($descriptors: Descriptors!){ predictPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
