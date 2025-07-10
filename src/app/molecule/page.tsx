@@ -1,7 +1,7 @@
 "use client"
 import { Slider } from 'primereact/slider';
 import {moleculeDescriptorsInfo, descriptor, descriptorNames} from './consts'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputNumber } from 'primereact/inputnumber';
 import { gql, useQuery } from '@apollo/client';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -9,8 +9,13 @@ import { Chart } from 'primereact/chart';
 import { Message } from 'primereact/message';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { RDKitModule } from '@rdkit/rdkit';
+import { defaultGradientConfig } from '@/lib/consts';
+import {SingleView, Molecule} from '@/lib/xsmiles/src/modules/SingleView';
+import { Method } from '@/lib/xsmiles/src/types/molecule.types';
 
 export default function Molecule() {
+    const [rdkit, setRDKit] = useState<RDKitModule>();
     const queryInterpret = gql`query ($descriptors: Descriptors!){ interpretPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
     const queryPredict = gql`query ($descriptors: Descriptors!){ predictPermeabilityByMolecularDescriptors(descriptors:$descriptors) }`
     const querySimilar = gql`query ($descriptors: Descriptors!){ findSimilarMoleculesByMolecularDescriptors(descriptors:$descriptors) }`
@@ -27,6 +32,45 @@ export default function Molecule() {
         newdescriptorInputs[index].value = val;
         setDescriptorInputs(newdescriptorInputs);
     };
+
+    useEffect(() => {
+        window.initRDKitModule().then((RDKit: RDKitModule) => {
+            window.RDKit = RDKit
+            setRDKit(RDKit);
+        });
+    }, []);
+
+    function mapFunc(row:any) {
+        if (rdkit) {
+            let mol = rdkit.get_mol(row[0]);
+            if (mol) {
+                let svg = mol.get_svg();
+                return {'smile':svg, 'distance':row[1]}
+            }  
+        }
+    }
+
+    function renderMolImage (rowData:any) {
+        if (rdkit) {
+            const met: Method = {
+                name: "Permeability",
+                scores: [],
+                attributes: {}
+            }
+
+            const molView: Molecule = {
+                string: rowData.smile,
+                method: met,
+                attributes: {}
+            }
+            return (
+                <SingleView molecule={molView} drawerType='RDKitDrawer' gradientConfig={defaultGradientConfig} hideAttributesTable hideBarChart/>
+            )
+        }
+        else {
+            return rowData.smile
+        }
+    }
 
     return (
         <div>
@@ -68,7 +112,7 @@ export default function Molecule() {
                         { loadingSimilar && <ProgressSpinner />}
                         { dataSimilar &&
                         <DataTable value={dataSimilar.findSimilarMoleculesByMolecularDescriptors.map((row: any) => ({"smile": row[0], "distance": row[1]}))}>
-                            <Column field="smile" header="Smile"></Column>
+                            <Column field="smile" header="Smile" body={renderMolImage}></Column>
                             <Column field="distance" header="Distance"></Column>
                         </DataTable>
                         }
